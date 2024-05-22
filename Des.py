@@ -1,15 +1,11 @@
 import random
-def Check_Des_Valid_Input(PrimaryKey, inputBit, lenKey, lenBit):
-    if ( len(PrimaryKey) != lenKey ):
-         return False
-    else:
-        if (len(inputBit) != lenBit):
-            return False
+def Check_Des_Valid_Input(inputBit, lenKey, lenBit):
+    # if (len(inputBit) != lenBit):
+    #         return False
     return True
 
-def DesEncrypt(PrimaryKey ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64):
-    if Check_Des_Valid_Input(PrimaryKey,InputBit, lenKey, lenBit) :
-       keys = generate_subkeys(PrimaryKey)
+def DesEncrypt(keys ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64):
+    if Check_Des_Valid_Input(InputBit, lenKey, lenBit) :
        mid = len(InputBit)//2
        L0 = InputBit[:mid]
        R0 = InputBit[mid:]
@@ -19,7 +15,26 @@ def DesEncrypt(PrimaryKey ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64)
        Right_List.append(R0)
        for i in range (NumberOfRound):
            left = Right_List[i]
-           right = Left_List[i]^Ffunction(Right_List[i],keys[i])
+           right = (int(Left_List[i]))^Ffunction(Right_List[i],keys[i])
+           Left_List.append(left)
+           Right_List.append(right)
+
+       return  Right_List[-1] + Left_List[-1]
+    else :
+        raise ValueError("Invalid Input")
+
+def DesDecrypt(keys ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64):
+    if Check_Des_Valid_Input(InputBit, lenKey, lenBit) :
+       mid = len(InputBit)//2
+       L0 = InputBit[:mid]
+       R0 = InputBit[mid:]
+       Left_List = []
+       Right_List = []
+       Left_List.append(L0)
+       Right_List.append(R0)
+       for i in range (NumberOfRound):
+           left = Right_List[i]
+           right = (int(Left_List[i]))^Ffunction(Right_List[i],keys[NumberOfRound-1-i])
            Left_List.append(left)
            Right_List.append(right)
 
@@ -29,7 +44,7 @@ def DesEncrypt(PrimaryKey ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64)
 
 
 def Ffunction(intput, key):
-    output = intput^key
+    output = (int(intput))^key
     return output
 def genRandomKey(lenKey = 64):
     key = random.getrandbits(lenKey)
@@ -76,12 +91,22 @@ def generate_subkeys(key):
     return subkeys
 
 # test
-def test():
+def testKey():
     PrimaryKey = genRandomKey()
     print("primaryKey:", PrimaryKey)
     subkeys = generate_subkeys(PrimaryKey)
     for key in subkeys :
         print("subkey: ", key)
+
+def demo():
+    PrimaryKey = genRandomKey()
+    print("primaryKey:", PrimaryKey)
+    subkeys = generate_subkeys(PrimaryKey)
+    plaintext = "1084729999970598814"
+    cyphertext = str(DesEncrypt(subkeys,plaintext))
+    print("cypher text : ", cyphertext)
+    print("decrypt text: ", DesDecrypt(subkeys,cyphertext))
+
 # main function
 if __name__ == "__main__":
-    test()
+    demo()

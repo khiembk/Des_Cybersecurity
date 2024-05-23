@@ -6,9 +6,11 @@ def Check_Des_Valid_Input(inputBit, lenKey, lenBit):
 
 def DesEncrypt(keys ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64):
     if Check_Des_Valid_Input(InputBit, lenKey, lenBit) :
-       mid = len(InputBit)//2
+       mid = len(str(InputBit))//2
        L0 = InputBit[:mid]
+       print("LO: ", L0)
        R0 = InputBit[mid:]
+       print("R0: ",R0)
        Left_List = []
        Right_List = []
        Left_List.append(L0)
@@ -19,7 +21,7 @@ def DesEncrypt(keys ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64):
            Left_List.append(left)
            Right_List.append(right)
 
-       return  Right_List[-1] + Left_List[-1]
+       return  str(Right_List[-1]) + str(Left_List[-1])
     else :
         raise ValueError("Invalid Input")
 
@@ -38,7 +40,7 @@ def DesDecrypt(keys ,InputBit, NumberOfRound=16, lenKey = 64, lenBit = 64):
            Left_List.append(left)
            Right_List.append(right)
 
-       return  Right_List[-1] + Left_List[-1]
+       return  str(Right_List[-1]) + str(Left_List[-1])
     else :
         raise ValueError("Invalid Input")
 
@@ -102,8 +104,9 @@ def demo():
     PrimaryKey = genRandomKey()
     print("primaryKey:", PrimaryKey)
     subkeys = generate_subkeys(PrimaryKey)
-    plaintext = "1084729999970598814"
-    cyphertext = str(DesEncrypt(subkeys,plaintext))
+    plaintext = random.getrandbits(64)
+    print("plaintext: ", plaintext)
+    cyphertext = str(DesEncrypt(subkeys,str(plaintext)))
     print("cypher text : ", cyphertext)
     print("decrypt text: ", DesDecrypt(subkeys,cyphertext))
 

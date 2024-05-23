@@ -136,23 +136,19 @@ def key_schedule(key, subkeySize = 16, strike = 4):
         keys.append(cur_key)
     return keys
 
-
+def SPN_block(key, inputbit):
+    keys = key_schedule(key)
+    Nr = len(keys)-1
+    return SPN(inputbit,keys,Nr)
 def demo():
-    keys = []
-    keys.append('0011101010010100')
-    keys.append('1010100101001101')
-    keys.append('1001010011010110')
-    keys.append('0100110101100011')
-    keys.append('1101011000111111')
-
-    plaintext = '0010011010110111'
-    #print(bin2binPermutation(plaintext))
-    cyphertext = SPN(plaintext,keys)
-    print("cyphertext:", cyphertext)
+    key = "00111010100101001101011000111111"
+    plaintext = '0010011010110111' #16 bit
+    ciphertext = SPN_block(key, plaintext)
+    print("ciphertext:", ciphertext)
 def testKey():
     key = "00111010100101001101011000111111"
     keys = key_schedule(key)
     for cur_key in keys :
         print("key :", cur_key)
 if __name__ == "__main__":
-    testKey()
+    demo()

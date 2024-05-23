@@ -26,10 +26,10 @@ def getInitRandom(sizeOfBit=16):
     return  init
 
 def CBC(initValue, key,InputString, chainSize = 2):
-    lenInput = len(InputString)
     encrypt = ""
     while (len(InputString) % chainSize != 0):
         InputString = InputString + " "
+    lenInput = len(InputString)
     inputbit0 = Xor2bin(initValue,char2bit(InputString[:chainSize]))
     precipher = SPN_encrypt.SPN_block(key,inputbit0)
     encrypt = encrypt + precipher
@@ -39,13 +39,45 @@ def CBC(initValue, key,InputString, chainSize = 2):
         encrypt = encrypt + precipher
 
     return encrypt
+def CFB(initValue, key, InputString, chainSize = 2):
+    while(len(InputString)% chainSize!=0):
+        InputString = InputString + " "
+    lenInput = len(InputString)
+    precipher = Xor2bin(char2bit(InputString[:chainSize]),SPN_encrypt.SPN_block(key,initValue))
+    cipher = ""
+    cipher = cipher + precipher
+    for i in range(chainSize,lenInput-chainSize,chainSize):
+        precipher = Xor2bin(char2bit(InputString[i:i+chainSize]),SPN_encrypt.SPN_block(key,precipher))
+        cipher = cipher + precipher
+
+    return cipher
+
+def OFB(initValue, key, InputString, chainSize =2 ):
+    while (len(InputString)%chainSize!=0):
+        InputString = InputString + " "
+
+    lenInput = len(InputString)
+    cipher = ""
+    preElement = SPN_encrypt.SPN_block(key,initValue)
+    for i in range(0,lenInput-chainSize,chainSize):
+        precipher = Xor2bin(preElement,char2bit(InputString[i:i+chainSize]))
+        cipher = cipher + precipher
+        preElement = SPN_encrypt.SPN_block(key,preElement)
+
+    return cipher
 def test():
     initValue = getInitRandom()
     print("getRandom: ", initValue)
     intputString = "hello"
     key = "00111010100101001101011000111111"
     cipher = CBC(initValue,key,intputString)
-    print("cipher: ",cipher)
+    cipher1 = CFB(initValue,key,intputString)
+    cipher2 = OFB(initValue,key,intputString)
+    print("cipher CBC: ",cipher)
+    print("cipher CFB: ",cipher1)
+    print("cipher OFB: ",cipher2)
+
+
 
 
 if __name__ == "__main__":

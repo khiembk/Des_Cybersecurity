@@ -122,14 +122,20 @@ def SPN(inputbit, keys, Nr = 4):
         v.append(cur_v)
         cur_w = bin2binPermutation(cur_v)
         w.append(cur_w)
-        print("u[",i,"]: ",u[i])
-        print("v[", i, "]: ", v[i])
-        print("w[", i, "]: ", w[i])
+
     cur_u = Xor2bin(w[Nr-1],keys[Nr-1])
-    print("u[4]: ", cur_u)
     cur_v = hex2bin(hex2hexSubtitution(bin2hex(cur_u)))
-    print("v[4]: ", cur_v)
     return Xor2bin(cur_v,keys[Nr])
+
+
+def key_schedule(key, subkeySize = 16, strike = 4):
+    keys = []
+    numkey = (len(key) - subkeySize)//strike + 1
+    for i in range(numkey):
+        cur_key = key[i*strike:i*strike + subkeySize]
+        keys.append(cur_key)
+    return keys
+
 
 def demo():
     keys = []
@@ -143,6 +149,10 @@ def demo():
     #print(bin2binPermutation(plaintext))
     cyphertext = SPN(plaintext,keys)
     print("cyphertext:", cyphertext)
-
+def testKey():
+    key = "00111010100101001101011000111111"
+    keys = key_schedule(key)
+    for cur_key in keys :
+        print("key :", cur_key)
 if __name__ == "__main__":
-    demo()
+    testKey()

@@ -26,11 +26,17 @@ def RSA_decrypt(Input ,d, n):
     for num in Input :
         output_list.append(expo_algo(num,d,n))
     return output_list
+
+def De2Bin(num):
+    return [int(bit) for bit in bin(num)[2:]]
 def expo_algo(intputNum ,e ,n):
     output = 1
-    for i in range(e):
-        output = output*intputNum
-        output = output%n
+    bin_e = De2Bin(e)
+    len_e = len(bin_e)
+    for i in range(len_e):
+        output = (output**2)%n
+        if (bin_e[i]!= 0):
+          output = (output*intputNum)%n
     return output
 
 def test():
